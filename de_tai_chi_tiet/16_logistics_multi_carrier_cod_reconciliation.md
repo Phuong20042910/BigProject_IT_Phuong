@@ -154,3 +154,57 @@ sequenceDiagram
     end
 ```
 
+---
+
+## 6. MA TRẬN ACTORS & QUY TRÌNH NGHIỆP VỤ BIG PROJECT (ENTERPRISE LOGISTICS WORKFLOWS)
+
+```mermaid
+stateDiagram-v2
+    [*] --> ORDER_CREATED: Tạo đơn hàng từ ERP / Sàn TMĐT
+    ORDER_CREATED --> SMART_ROUTING: AI Routing: Chọn hãng rẻ nhất & Nhanh nhất theo khu vực
+    SMART_ROUTING --> CARRIER_DISPATCHED: Đẩy đơn qua Open API & In nhãn vận chuyển (A4/A6)
+    CARRIER_DISPATCHED --> IN_TRANSIT: Shipper lấy hàng & Vận chuyển liên tỉnh
+    IN_TRANSIT --> DELIVERED: Giao thành công & Thu tiền COD
+    IN_TRANSIT --> FAILED_DELIVERY: Giao thất bại (Khách không nghe máy)
+    FAILED_DELIVERY --> RE_DELIVERY: Tự động nhắc hẹn giao lại lần 2, lần 3
+    FAILED_DELIVERY --> RETURNING: Quá 3 lần -> Chuyển hoàn về kho
+    DELIVERED --> AWAITING_COD: Chờ phiên chuyển tiền đối soát định kỳ
+    AWAITING_COD --> COD_SETTLED: Tiền COD về tài khoản & So khớp thành công
+    AWAITING_COD --> COD_OVERDUE: Hãng giữ tiền COD quá 7 ngày -> Bắn cảnh báo đòi tiền
+```
+
+### 6.1. Ma trận Actors & Phân quyền Logistics Đa Chi Nhánh
+| Actor / Vai trò | Trách nhiệm & Quyền hạn nghiệp vụ trong Big Project |
+| :--- | :--- |
+| **Logistics Manager (Giám đốc chuỗi cung ứng)** | Cấu hình hạn mức cước, ký hợp đồng chiết khấu với các hãng, theo dõi chỉ số On-Time Delivery (OTD) toàn hệ thống. |
+| **Warehouse Fulfillment Lead (Trưởng kho đóng gói)** | In mã vận đơn hàng loạt, quét mã barcode bàn giao hàng cho shipper, xác nhận biên bản giao nhận (Handover Record). |
+| **COD Reconciliation Accountant (Kế toán đối soát COD)** | Rà soát các đơn bị lệch cước vượt cân, đối soát file sao kê định kỳ từ 5 hãng vận chuyển, phê duyệt xuất hóa đơn cước vận chuyển. |
+| **Carrier Open APIs (GHTK, GHN, Viettel Post, J&T, NinjaVan)** | Cung cấp Webhook trạng thái hành trình đơn hàng, bảng tính cước thời gian thực và lịch sử phiên chuyển tiền COD. |
+
+---
+
+### 6.2. Nghiệp vụ Tự Động Định Tuyến Hãng Tối Ưu (Smart Carrier Routing Engine)
+Khi nhân viên bấm "Tạo vận đơn", hệ thống không chọn hãng thủ công mà áp dụng thuật toán tối ưu hóa đa mục tiêu:
+1. **Tiêu chí chi phí (Cost Minimization):** Tra cứu bảng giá cước đồng thời qua API của 5 hãng theo trọng lượng và tuyến đường (Nội tỉnh, Nội vùng, Liên tỉnh).
+2. **Tiêu chí chất lượng dịch vụ (SLA & Carrier Reliability Score):**
+   - Đánh giá chỉ số giao đúng hạn (OTD%) và tỷ lệ hoàn hàng của từng hãng trong 30 ngày gần nhất tại chính phường/xã của người nhận.
+   - Nếu Hãng A rẻ hơn 2.000đ nhưng tại Quận 12 tỷ lệ giao trễ lên tới $25\%$, hệ thống tự động ưu tiên Hãng B để bảo vệ trải nghiệm khách hàng.
+
+---
+
+### 6.3. Thuật Toán Phát Hiện Gian Lận Cân Nặng (Volumetric & Weight Fraud Prevention)
+- **Quy tắc thể tích chuẩn:**
+  $$\text{Khối lượng quy đổi (g)} = \frac{\text{Dài (cm)} \times \text{Rộng (cm)} \times \text{Cao (cm)}}{5000} \times 1000$$
+- **Cơ chế bẫy lệch cước:**
+  - Nếu shop khai báo kiện hàng là 300g (kích thước $15 \times 10 \times 5$ cm), nhưng trong bảng đối soát tuần hãng tính 1.500g và trừ thêm 35.000đ cước:
+  - Hệ thống tự động kích hoạt cờ đỏ `WEIGHT_OVERCHARGED`, đính kèm ảnh chụp kiện hàng lúc quét mã tại kho và sinh công văn khiếu nại yêu cầu hãng hoàn tiền cước chênh lệch.
+
+---
+
+### 6.4. Nghiệp vụ Cảnh Báo Giam Tiền COD & Thất Thoát Dòng Tiền (COD Holding Alerts)
+- **Giới hạn thời gian giữ tiền (COD Aging SLA):** Các hãng cam kết chuyển tiền COD vào Thứ 3 & Thứ 6 hàng tuần.
+- Nếu một đơn hàng đã chuyển trạng thái `DELIVERED_SUCCESS` quá 7 ngày mà chưa xuất hiện trong bất kỳ phiên đối soát nào của hãng:
+  - Hệ thống tự động xếp vào danh mục `COD_HELD_BY_CARRIER`.
+  - Tổng hợp danh sách đơn bị giam tiền thành báo cáo "Nợ đọng COD", tự động gửi email cảnh báo tới Quản lý tài khoản (Account Manager) của hãng vận chuyển.
+
+

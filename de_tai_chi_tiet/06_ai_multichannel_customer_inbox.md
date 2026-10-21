@@ -76,3 +76,80 @@ graph TD
    - Nếu AI phát hiện sentiment của khách đang bực bội (tức giận, khiếu nại) hoặc câu hỏi vượt quá độ tin cậy $0.75$, hệ thống tự động tắt chế độ Auto-Reply và rung chuông thông báo cho nhân viên con người tiếp quản cuộc trò chuyện.
 3. **Structured Output (Function Calling):**
    - Ép kiểu trả về của LLM thành JSON schema chuẩn của đơn hàng để đẩy thẳng vào Database mà không sợ lỗi định dạng.
+
+---
+
+## 4. MA TRẬN ACTORS & PHÂN QUYỀN ĐA DOANH NGHIỆP (MULTI-TENANT RBAC)
+
+Hệ thống được thiết kế theo mô hình B2B SaaS phục vụ đồng thời hàng trăm doanh nghiệp/chủ shop độc lập:
+
+| Actor / Vai trò | Trách nhiệm & Quyền hạn nghiệp vụ trong Big Project |
+| :--- | :--- |
+| **Tenant Owner (Chủ doanh nghiệp / Giám đốc kinh doanh)** | Quản lý tài khoản doanh nghiệp, nạp tiền mua token LLM, cấu hình kênh kết nối (Fanpage token, Zalo secret), xem Dashboard doanh thu và CSAT tổng. |
+| **Customer Support Team Lead (Trưởng ca trực CSKH)** | Giám sát danh sách cuộc trò chuyện theo thời gian thực, can thiệp điều chuyển hội thoại giữa các nhân viên, phê duyệt tài liệu tri thức mới cho AI. |
+| **Human Support Agent (Nhân viên tư vấn)** | Tiếp nhận các ca khó mà AI bàn giao (Handover), chat trực tiếp với khách, chỉnh sửa và xác nhận đơn hàng nháp do AI trích xuất. |
+| **AI Sales & Support Agent** | Trực 24/7, tự động trả lời khách hàng dưới 2 giây theo phong cách thương hiệu, tra cứu chính sách, tự động tạo đơn hàng nháp. |
+| **End Customer (Người mua hàng đa kênh)** | Nhắn tin từ Facebook Messenger, Zalo OA, Website Livechat, nhận tư vấn và link thanh toán/xác nhận đơn. |
+
+---
+
+## 5. PHÂN TÍCH NGHIỆP VỤ BIG PROJECT & BẢN ĐỒ QUY TRÌNH (ENTERPRISE AI CSKH WORKFLOWS)
+
+```mermaid
+stateDiagram-v2
+    [*] --> INCOMING_MESSAGE: Khách nhắn tin từ FB / Zalo
+    INCOMING_MESSAGE --> AI_PROCESSING: Webhook nhận tin & Đẩy vào hàng đợi
+    AI_PROCESSING --> AI_AUTO_REPLY: AI tự tin >= 80% & Khách hài lòng
+    AI_PROCESSING --> HUMAN_HANDOVER: Khách tức giận / Yêu cầu gặp người thật / AI phân vân
+    AI_PROCESSING --> EXTRACT_ORDER: Khách để lại thông tin đặt hàng
+    EXTRACT_ORDER --> DRAFT_ORDER_CREATED: AI bóc tách SĐT, Địa chỉ, Món hàng
+    DRAFT_ORDER_CREATED --> HUMAN_CONFIRMATION: Nhân viên duyệt & Bấm xác nhận
+    HUMAN_CONFIRMATION --> ERP_SYNC: Đẩy đơn sang hệ thống Vận chuyển / Kho
+    HUMAN_HANDOVER --> RESOLVED: Nhân viên giải quyết xong & Đóng ticket
+    AI_AUTO_REPLY --> RESOLVED: Khách ngưng nhắn > 30 phút
+    RESOLVED --> CSAT_SURVEY: Gửi tin nhắn khảo sát độ hài lòng (1 - 5 sao)
+```
+
+---
+
+### 5.1. Nghiệp vụ Phân luồng & Cân bằng tải Hội thoại (Skill-Based Routing & Load Balancing)
+- **Thuật toán phân bổ nhân viên (Round-Robin & Workload Matching):**
+  - Khi một cuộc trò chuyện cần chuyển giao cho con người, hệ thống không bắn bừa bãi mà kiểm tra:
+    1. Trạng thái hoạt động của nhân viên (`ONLINE`, `BUSY`, `AWAY`).
+    2. Số lượng cuộc trò chuyện đang xử lý đồng thời (Max 5 chats/nhân viên).
+    3. Thẻ kỹ năng (Tag): Khách hỏi về kỹ thuật/bảo hành chuyển cho nhân viên kỹ thuật; khách hỏi mua sỉ chuyển cho nhân viên Sales B2B.
+
+---
+
+### 5.2. Nghiệp vụ Quản trị Cam kết Chất lượng & Leo thang SLA (SLA Escalation Engine)
+- **Chỉ số thời gian phản hồi (First Response Time - FRT):** Cam kết phản hồi khách dưới 30 giây trong giờ hành chính.
+- **Quy tắc leo thang (Escalation Rule):**
+  - Nếu sau 2 phút nhân viên chưa phản hồi tin nhắn của khách: Hệ thống tự động gửi thông báo nhắc nhở lên màn hình nhân viên.
+  - Nếu sau 5 phút vẫn chưa phản hồi: Hệ thống tự động chuyển cuộc trò chuyện lên cấp **Team Lead** và đánh dấu vi phạm chỉ số KPI của nhân viên trong ngày.
+
+---
+
+### 5.3. Quy trình Trích xuất Đơn hàng & Chống Bom Hàng COD (Auto-Order & Fraud Prevention)
+- Khi AI phát hiện khách có ý định mua hàng:
+  1. AI trích xuất thực thể: `Họ tên`, `Số điện thoại`, `Địa chỉ giao hàng`, `Danh sách sản phẩm & số lượng`.
+  2. **Kiểm tra độ tin cậy số điện thoại (Blacklist & Spam Check):**
+     - Tra cứu số điện thoại trong cơ sở dữ liệu lịch sử mua hàng hoặc API cảnh báo số điện thoại chuyên bom hàng.
+     - Nếu số điện thoại có tỷ lệ hoàn đơn $> 40\%$: AI tự động thông báo: *"Dạ shop hỗ trợ giao hàng, tuy nhiên với đơn này shop nhờ anh/chị đặt cọc trước phí ship 30.000đ qua mã QR bên dưới nhé ạ"*.
+  3. Tạo đơn hàng trạng thái `DRAFT` và gửi tin nhắn tóm tắt cho khách xác nhận: *"Shop xin chốt lại đơn của anh gồm [2 hộp Cà phê]. Anh kiểm tra thông tin đúng chưa ạ?"*.
+
+---
+
+### 5.4. Vòng đời Quản trị Tri thức & Giám sát Ảo giác AI (Knowledge Base & RAG Evaluation)
+- **Quy trình cập nhật tri thức:** Khi chủ shop sửa bảng giá hoặc thêm sản phẩm mới:
+  - File PDF/Excel được đưa vào luồng Chunking $\rightarrow$ Sinh Vector Embeddings mới $\rightarrow$ Cập nhật vào Vector Database trong vòng 60 giây.
+- **Đánh giá phản hồi con người (RLHF / Human Feedback Loop):**
+  - Nhân viên có quyền bấm nút "👍 Câu trả lời tốt" hoặc "👎 Trả lời sai" bên cạnh mỗi tin nhắn của AI.
+  - Các câu trả lời bị gắn cờ "👎" tự động đưa vào danh sách **Audit Backlog** để quản trị viên bổ sung dữ liệu tri thức hoặc tinh chỉnh System Prompt.
+
+---
+
+### 5.5. Nghiệp vụ Quản lý Hạn mức Tiêu thụ Token SaaS (Token Metering & Billing Quota)
+- Để tránh việc doanh nghiệp bị cạn tiền do khách spam bot:
+  - Mỗi tài khoản Tenant được cấu hình hạn mức hàng tháng (Ví dụ: Gói Basic: 500.000 tokens/tháng; Gói Pro: 5.000.000 tokens/tháng).
+  - Hệ thống áp dụng **Token Bucket Rate Limiting** trên từng số điện thoại người dùng: Mỗi khách hàng chỉ được nhắn tối đa 20 tin nhắn với AI trong vòng 10 phút để tránh bị bot tấn công tiêu hao chi phí API.
+

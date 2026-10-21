@@ -193,3 +193,21 @@ flowchart TD
    - Gửi Push Notification / Email khẩn cấp cho CEO.
    - Hiển thị Actionable Advice trên Dashboard: *"Khuyến nghị thu hồi công nợ của 3 khách hàng lớn sau đây để bù đắp 40 triệu thiếu hụt"*.
 
+---
+
+### 7.6. Luồng Kiểm Soát Rủi Ro & Phòng Chống Rửa Tiền (FinTech AML & Anomaly Detection)
+- Trong các nền tảng tài chính doanh nghiệp, việc giám sát dòng tiền bất thường là quy định bắt buộc:
+  1. **Phát hiện giao dịch chia nhỏ (Structuring / Smurfing):** Hệ thống phát hiện chuỗi giao dịch dưới 100 triệu VNĐ gửi liên tiếp trong 30 phút từ nhiều tài khoản khác nhau nhưng cùng đích đến.
+  2. **Cảnh báo đột biến doanh thu (Spike Anomaly):** Nếu số lượng giao dịch trong 1 giờ vượt quá $300\%$ độ lệch chuẩn ($\pm 3\sigma$) so với trung bình 30 ngày qua, hệ thống tạm hoãn tính năng xuất báo cáo thuế và gửi email xác thực 2FA cho Giám đốc tài chính (CFO).
+
+---
+
+### 7.7. Quy Trình Khóa Sổ Kế Toán Cuối Kỳ (Fiscal Period Closing Workflow)
+- **Chu kỳ chốt sổ (Month-End & Year-End Close):**
+  - Vào ngày cuối cùng của tháng, kế toán thực hiện kiểm kê và bấm `Lock Accounting Period`.
+  - Hệ thống tự động kích hoạt tiến trình:
+    1. Kiểm tra toàn bộ tài khoản trung gian (3388, 1388) phải có số dư bằng 0.
+    2. Tự động sinh các bút toán kết chuyển doanh thu, chi phí sang **Tài khoản Xác định kết quả kinh doanh (Account 911)**.
+    3. Tạo bản băm mật mã (**Cryptographic Merkle Tree Hash**) toàn bộ sổ cái trong tháng để niêm phong dữ liệu. Sau khi khóa, không ai (kể cả Super Admin hệ thống) có thể chèn thêm hoặc sửa đổi bút toán cũ.
+
+

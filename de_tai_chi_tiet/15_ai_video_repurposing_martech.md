@@ -89,3 +89,46 @@ graph TD
 
 - Các công cụ như OpusClip, Submagic, Vizard đang thu phí từ **$19 đến $49/tháng** (khoảng 500k - 1.2 triệu đồng/tháng) và có hàng triệu người dùng toàn cầu.
 - Nếu bạn làm một phiên bản **tối ưu tiếng Việt cực chuẩn (bắt đúng từ lóng tiếng Việt, font chữ không bị lỗi dấu, tích hợp thẳng TikTok Shop creator)**, bạn có thể dễ dàng kiếm được khách hàng trả tiền thực tế tại Việt Nam ngay trong tháng đầu ra mắt!
+
+---
+
+## 5. MA TRẬN ACTORS & PHÂN QUYỀN MARTECH SAAS (ENTERPRISE CREATOR MATRIX)
+
+| Actor / Vai trò | Trách nhiệm & Quyền hạn nghiệp vụ trong Big Project |
+| :--- | :--- |
+| **Agency / Brand Manager** | Quản lý không gian làm việc của nhiều nhãn hàng (Workspaces), nạp Credit phút render video, kết nối tài khoản TikTok/YouTube/Reels của thương hiệu. |
+| **Content Creator / Video Editor** | Tải video dài lên (Podcast, Livestream bán hàng), tùy chỉnh template phụ đề động, chỉnh sửa khung hình khuôn mặt, phê duyệt danh sách clip ngắn. |
+| **GPU Rendering Worker Pool** | Cụm máy chủ chuyên dụng (chạy FFmpeg + NVENC GPU) tiêu thụ hàng đợi render video không làm nghẽn máy chủ web. |
+| **Social Distribution Bot** | Tự động đăng video lên TikTok, YouTube Shorts, Facebook Reels theo đúng khung giờ vàng đã lên lịch (Scheduled Publishing). |
+
+---
+
+## 6. PHÂN TÍCH NGHIỆP VỤ BIG PROJECT & BẢN ĐỒ QUY TRÌNH (ENTERPRISE VIDEO AI WORKFLOWS)
+
+```mermaid
+stateDiagram-v2
+    [*] --> UPLOADED: Creator tải video Podcast 60 phút
+    UPLOADED --> AUDIO_EXTRACTION: Tách audio 16kHz & Đẩy vào BullMQ
+    AUDIO_EXTRACTION --> WHISPER_STT: Whisper sinh bản ghi phụ đề kèm Timestamps
+    WHISPER_STT --> VIRAL_SELECTION: LLM phân tích ngữ nghĩa -> Tìm 5 đoạn Hook hay nhất
+    VIRAL_SELECTION --> FACE_TRACKING: MediaPipe bắt tọa độ khuôn mặt & Cắt khung hình 9:16
+    FACE_TRACKING --> SUBTITLE_BURN: FFmpeg ghi đè phụ đề động Kinetic Typography
+    SUBTITLE_BURN --> PREVIEW_READY: Thông báo Creator vào xem trước 5 video Shorts
+    PREVIEW_READY --> AUTO_SCHEDULED: Creator bấm duyệt -> Hệ thống tự động đặt lịch đăng
+    AUTO_SCHEDULED --> SOCIAL_PUBLISHED: Đăng thành công lên TikTok & YouTube Shorts
+```
+
+---
+
+### 6.1. Quản Trị Hàng Đợi Render Phân Tán & Quota Tín Dụng (Credit & Storage Quotas)
+- Video rendering là tác vụ ngốn tài nguyên CPU/GPU và ổ cứng rất lớn:
+  1. **Cơ chế Tiêu thụ Credit (Pay-as-you-render):** Mỗi tài khoản được cấp hạn mức phút (VD: Gói Starter: 120 phút video gốc/tháng; Gói Pro: 600 phút/tháng). Trừ credit ngay khi bắt đầu tiến trình STT.
+  2. **Chính sách Lưu trữ Tự Hủy (Auto-Purge Retention Policy):** Video gốc và các clip render tạm được lưu trữ trên S3/MinIO trong **7 ngày**. Sau 7 ngày, hệ thống tự động xóa file nhị phân nặng để tối ưu hóa chi phí lưu trữ đám mây, chỉ giữ lại phụ đề và đường dẫn video đã đăng lên mạng xã hội.
+
+---
+
+### 6.2. Kiểm Soát Bản Quyền Âm Nhạc & Tiêu Chuẩn Nền Tảng (Copyright & Policy Compliance)
+- Trước khi đăng tải lên TikTok / YouTube:
+  - Hệ thống kiểm tra âm lượng chuẩn hóa (**Audio Normalization EBU R128**) để âm thanh không bị rè hoặc quá nhỏ.
+  - Quét từ khóa vi phạm tiêu chuẩn cộng đồng (Sensitive Word Filter): Tự động phát hiện và cảnh báo các từ bị bóp tương tác hoặc cấm trên TikTok (VD: "chuyển khoản", "mua bán ngoài", từ ngữ bạo lực) để creator kịp thời biên tập lại.
+

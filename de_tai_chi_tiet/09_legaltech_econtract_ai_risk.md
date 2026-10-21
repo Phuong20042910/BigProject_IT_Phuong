@@ -207,3 +207,25 @@ sequenceDiagram
 3. Nếu khớp $100\%$: Hiển thị tích xanh *"Văn bản nguyên gốc, chữ ký hợp lệ"*.
 4. Nếu sai lệch dù 1 byte: Hiển thị cảnh báo đỏ *"Tài liệu đã bị can thiệp trái phép sau khi ký"*.
 
+---
+
+### 7.6. Nghiệp vụ Quản Trị Vòng Đời Mẫu Hợp Đồng & Biến Động (Contract Lifecycle Management - CLM)
+- **Hệ thống Template & Merge Fields:** Doanh nghiệp tạo sẵn các mẫu hợp đồng chuẩn (Hợp đồng lao động, Hợp đồng NDA, Hợp đồng thuê nhà).
+  - Tích hợp biến động dạng `{{employee_name}}`, `{{salary_amount}}`, `{{effective_date}}`.
+  - Hỗ trợ **Bulk Send (Ký hợp đồng hàng loạt):** Doanh nghiệp chỉ cần tải lên 1 file Excel danh sách 500 nhân sự mới, hệ thống tự động sinh 500 bản hợp đồng cá nhân hóa và gửi đồng loạt qua email/SMS.
+
+---
+
+### 7.7. Định Danh Điện Tử Cấp Cao & Tích Hợp VNeID / Chữ Ký Số Doanh Nghiệp (VNPT/Viettel-CA)
+- Tuân thủ Luật Giao dịch Điện tử 2023 và Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân:
+  1. **Xác thực danh tính eKYC:** Đối với hợp đồng giá trị lớn (> 100 triệu), người ký bắt buộc phải quét NFC Căn cước công dân gắn chip hoặc xác thực qua VNeID Level 2 trước khi ký.
+  2. **Tích hợp HSM / USB Token:** Hỗ trợ ký số cấp doanh nghiệp qua cổng Cloud HSM (Hardware Security Module) hoặc USB Token PKCS#11 của Viettel-CA, VNPT-CA, MISA eSign.
+
+---
+
+### 7.8. Niêm Phong Thời Gian Chuẩn Quốc Tế (RFC 3161 Timestamping Authority - TSA)
+- Khắc phục gian lận sửa giờ hệ thống trên máy tính:
+  - Khi hợp đồng hoàn tất, server gửi mã băm SHA-256 của tài liệu tới máy chủ cấp dấu thời gian chuẩn quốc gia (TSA Server).
+  - Dấu thời gian mật mã được nhúng vĩnh viễn vào file PDF, chứng minh tài liệu đã tồn tại và được ký chính xác tại thời điểm đó, có giá trị pháp lý tuyệt đối trước tòa án khi có tranh chấp.
+
+

@@ -157,3 +157,55 @@ Theo quy định hiện hành đối với hộ kinh doanh và cá nhân kinh do
 1. **Khách hàng đang khóc ròng vì thuế:** Hầu hết các chủ shop trên Shopee/TikTok Shop hiện nay đều nhận được giấy mời của cơ quan thuế yêu cầu đối soát số liệu 3 năm qua nhưng không biết lấy số liệu ở đâu để giải trình.
 2. **Tiết kiệm hàng chục triệu thất thoát:** Một shop doanh thu 500 triệu/tháng thường bị thất thoát từ $1\%$ đến $3\%$ tiền hoàn hàng và phí sàn trừ vô lý (5 - 15 triệu/tháng). Phần mềm của bạn chỉ cần giúp họ đòi lại được số tiền này thì mức phí thuê bao 300k - 500k/tháng là quá rẻ!
 3. **100% Thuần Phần Mềm:** Toàn bộ dữ liệu lấy qua API và file Excel/CSV, xử lý trên Database và hiển thị giao diện báo cáo cực kỳ tiện lợi.
+
+---
+
+## 6. MA TRẬN ACTORS & QUY TRÌNH NGHIỆP VỤ BIG PROJECT (ENTERPRISE TAX & RECONCILIATION)
+
+```mermaid
+stateDiagram-v2
+    [*] --> SYNCING: Tự động đồng bộ đơn qua Open API / File Excel sàn
+    SYNCING --> UNRECONCILED: Lưu vào CSDL Đa kênh
+    UNRECONCILED --> THREE_WAY_MATCHING: Chạy Engine so khớp (Sàn vs Kho vs Ngân hàng)
+    THREE_WAY_MATCHING --> MATCHED: Khớp 100% doanh thu & Phí sàn hợp lệ
+    THREE_WAY_MATCHING --> DISCREPANCY: Phát hiện lệch tiền / Sàn trừ phí sai / Mất hàng hoàn
+    DISCREPANCY --> CLAIM_FILED: Tự động sinh Ticket khiếu nại gửi Shopee/TikTok
+    CLAIM_FILED --> REIMBURSED: Sàn duyệt hoàn tiền bồi thường
+    CLAIM_FILED --> REJECTED: Sàn từ chối -> Chuyển Kế toán trưởng xử lý
+    MATCHED --> TAX_CALCULATED: Đưa vào kỳ tính thuế định kỳ
+    REIMBURSED --> TAX_CALCULATED: Ghi nhận thu nhập bồi thường chịu thuế
+    TAX_CALCULATED --> XML_EXPORTED: Xuất tờ khai thuế Mẫu 01/CNKD nộp Tổng cục Thuế
+```
+
+### 6.1. Ma trận Actors & Phân quyền Doanh nghiệp (Enterprise Roles)
+| Actor / Vai trò | Trách nhiệm & Quyền hạn nghiệp vụ trong Big Project |
+| :--- | :--- |
+| **Merchant Owner (Chủ chuỗi kinh doanh)** | Xem Dashboard P&L lãi/lỗ thực sau thuế, phê duyệt các khoản chiết khấu lớn, ký số tờ khai thuế điện tử. |
+| **Chief Accountant (Kế toán trưởng / Tax Auditor)** | Rà soát các đơn hàng lệch tiền, cấu hình danh mục chi phí được trừ, xuất hồ sơ giải trình khi cơ quan thuế thanh tra. |
+| **Warehouse & Operations Staff (Thủ kho / Vận hành)** | Quét barcode xác nhận hàng hoàn nhập kho; đánh dấu cờ cảnh báo đơn hàng sàn báo "Đã hoàn trả" nhưng thực tế kho không nhận được hàng. |
+| **Automated Platform Sync Workers** | Cụm worker tự động chạy 2h/lần gọi API Shopee/TikTok/Lazada để lấy trạng thái đơn, biểu phí và sao kê ví điện tử sàn. |
+
+---
+
+### 6.2. Quy trình Vòng đời Đối soát 3 Bên Chuyên Sâu (3-Way Reconciliation Workflow)
+1. **Bước 1 - Lớp Sàn TMĐT (Platform Data):** Đọc dữ liệu đơn hàng, phí dịch vụ cố định, phí thanh toán, voucher trợ giá từ Shopee/TikTok API.
+2. **Bước 2 - Lớp Kho Nội Bộ (WMS Data):** So khớp trạng thái thực tế của sản phẩm: Đã xuất kho $\leftrightarrow$ Đang giao $\leftrightarrow$ Đã giao thành công $\leftrightarrow$ Hàng hoàn về kho.
+3. **Bước 3 - Lớp Dòng tiền Ngân hàng (Bank Statement):** Bóc tách giao dịch nạp/rút tiền từ ví người bán về tài khoản ngân hàng thông qua kết nối Open Banking / VietQR Reconciliation.
+4. **Phát hiện ngoại lệ (Anomaly Triggers):**
+   - **Lệch cân nặng (Weight Overcharge):** Sàn tự ý tăng trọng lượng kiện hàng từ 200g lên 1.200g để trừ thêm 30.000đ cước phí.
+   - **Hàng hoàn thất lạc (Ghost Return):** Sàn đã hoàn tiền 100% cho người mua từ 14 ngày trước nhưng kho người bán chưa nhận được hàng hoàn.
+
+---
+
+### 6.3. Quy trình Tự Động Hóa Khiếu Nại Sàn (Automated Dispute Claims Engine)
+- Khi phát hiện đơn hàng bị trừ phí sai hoặc mất hàng hoàn:
+  - Hệ thống tự động gom bằng chứng: Ảnh chụp đóng gói lúc gửi đi (nếu có barcode), Lịch sử đối soát kho, Lịch sử hành trình đơn hàng.
+  - Tự động điền biểu mẫu khiếu nại (Claim Ticket) chuẩn form của Shopee Support / TikTok Shop Partner.
+  - Theo dõi trạng thái khiếu nại (Pending $\rightarrow$ Approved $\rightarrow$ Money Returned) và tự động ghi nhận bút toán hoàn tiền vào sổ quỹ khi tiền về ví.
+
+---
+
+### 6.4. Nghiệp vụ Kê Khai Thuế Chuẩn Hóa & Giải Trình Thuế Tự Động (Tax Audit Defense)
+- **Tách bạch dòng tiền không chịu thuế:** Hệ thống tự động loại trừ các khoản không cấu thành doanh thu chịu thuế TNCN/GTGT: Tiền sàn hoàn do hủy đơn, Khoản phí vận chuyển mà khách trả trực tiếp cho đơn vị vận chuyển, Tiền bồi thường hàng vỡ hỏng.
+- **Xuất file XML nộp qua cổng Thuế Điện Tử (thuedientu.gdt.gov.vn):** Tạo tờ khai thuế tháng/quý chuẩn định dạng XML và bảng kê chi tiết phụ lục 01-1/BK-CNKD có chữ ký số điện tử chỉ với 1 click.
+

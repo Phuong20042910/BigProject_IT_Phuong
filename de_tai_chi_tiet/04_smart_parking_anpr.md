@@ -91,3 +91,50 @@ Pipeline gồm 3 bước rõ ràng:
 1. **Bước 1 (Plate Localization):** Mô hình **YOLOv8n** được huấn luyện với dataset biển số xe máy / ô tô Việt Nam để xuất ra toạ độ Bounding Box `[x, y, w, h]` của biển số.
 2. **Bước 2 (Image Pre-processing):** Cắt ảnh vùng biển số, chuyển đổi ảnh xám (Grayscale), cân bằng độ tương phản (Histogram Equalization) và xoay nghiêng nếu góc chụp bị chéo.
 3. **Bước 3 (Character Recognition - OCR):** Đưa qua **PaddleOCR** hoặc **EasyOCR** để đọc chuỗi ký tự (Ví dụ: `29A-123.45` hoặc `59F1-888.88`). Thời gian xử lý toàn bộ pipeline: **~120ms - 200ms** trên CPU thường.
+
+---
+
+## 5. MA TRẬN ACTORS & PHÂN QUYỀN HỆ THỐNG BÃI ĐỖ XE THÔNG MINH (PARKING LOT MATRIX)
+
+| Actor / Vai trò | Trách nhiệm & Quyền hạn nghiệp vụ trong Big Project |
+| :--- | :--- |
+| **Driver (Lái xe / Khách gửi xe)** | Đặt chỗ đỗ xe trước qua app di động, quét VietQR thanh toán tiền gửi xe, nhận chỉ dẫn đường đi tới ô đỗ còn trống. |
+| **Security Guard (Nhân viên bảo vệ tại bốt trực)** | Xử lý các ca nhận diện biển số nghi vấn, can thiệp nút bấm mở barrier bằng tay khi có sự cố, kiểm tra vé tháng/vé VIP. |
+| **Parking Operations Manager (Quản lý bãi xe)** | Cấu hình bảng giá gửi xe theo giờ cao điểm/thấp điểm, theo dõi doanh thu theo ca làm việc, quản lý danh sách xe đăng ký vé tháng. |
+| **ANPR Edge Gate Agent** | Tự động chụp ảnh, đọc biển số xe trong 150ms, kiểm tra tính hợp lệ và bắn tín hiệu MQTT nhả chốt barrier tự động. |
+
+---
+
+## 6. PHÂN TÍCH NGHIỆP VỤ BIG PROJECT & BẢN ĐỒ QUY TRÌNH (ENTERPRISE SMART PARKING WORKFLOWS)
+
+```mermaid
+stateDiagram-v2
+    [*] --> APPROACHING_GATE: Xe tiến vào làn cổng vào
+    APPROACHING_GATE --> ANPR_SCAN_IN: Camera AI chụp ảnh & Nhận diện biển số
+    ANPR_SCAN_IN --> BARRIER_OPEN_IN: Lưu vết thời gian vào + Ảnh biển số -> Mở barrier
+    BARRIER_OPEN_IN --> PARKING_GUIDANCE: Chỉ dẫn lái xe tới ô đỗ trống (Cảm biến báo Xanh)
+    PARKING_GUIDANCE --> PARKED: Xe vào chuồng -> Cảm biến HC-SR04 chuyển Đỏ
+    PARKED --> EXIT_APPROACH: Xe ra làn cổng xuất bãi
+    EXIT_APPROACH --> ANPR_SCAN_OUT: Camera chụp biển số ra & So khớp với biển số vào
+    ANPR_SCAN_OUT --> DYNAMIC_FEE_CALC: Tính cước theo thời gian đỗ thực tế
+    DYNAMIC_FEE_CALC --> INSTANT_PAYMENT: Hiện mã VietQR động trên màn hình cột xuất
+    INSTANT_PAYMENT --> BARRIER_OPEN_OUT: Webhook ngân hàng báo PAID -> Mở barrier cho xe qua
+```
+
+---
+
+### 6.1. Nghiệp Vụ Chống Trộm Xe & So Khớp Nhận Diện Hai Cổng (Theft Prevention Engine)
+- **Quy tắc an toàn bất biến:**
+  - Khi xe ra, hệ thống tự động hiển thị cạnh nhau trên màn hình của bảo vệ: *Ảnh chụp biển số lúc vào* $\leftrightarrow$ *Ảnh chụp biển số lúc ra*.
+  - Nếu độ tương đồng ký tự biển số $< 100\%$ hoặc phát hiện biển số ra chưa từng có bản ghi vào trong bãi:
+  - Hệ thống tự động khóa cần gạt barrier, phát chuông báo động đỏ `SUSPICIOUS_VEHICLE` để bảo vệ kiểm tra trực tiếp giấy tờ đăng ký xe (Cavet).
+
+---
+
+### 6.2. Nghiệp Vụ Tính Phí Linh Hoạt & Đặt Chỗ Trước (Dynamic Pricing & Advance Booking)
+- **Định giá theo nhu cầu (Surge Pricing):**
+  - Tự động điều chỉnh mức phí linh hoạt: Giá gửi xe tăng $20\%$ khi tỷ lệ lấp đầy bãi xe đạt $> 90\%$ (giờ cao điểm tại TTTM hoặc tòa nhà văn phòng).
+- **Giữ chỗ trước (Slot Reservation with Grace Period):**
+  - Người dùng có thể đặt chỗ đỗ xe trước 30 phút qua app. Ô đỗ được chuyển sang trạng thái `RESERVED` trên bản đồ bãi xe.
+  - Nếu sau 30 phút xe chưa vào bãi: Hệ thống tự động hủy đặt chỗ và tính phí phạt giữ chỗ 20.000 VNĐ trừ vào ví điện tử của người dùng.
+

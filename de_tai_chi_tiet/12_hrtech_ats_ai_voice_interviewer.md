@@ -140,3 +140,27 @@ flowchart TD
 4. **LLM Orchestrator** nhận văn bản, kết hợp với ngữ cảnh câu hỏi trước đó để sinh câu phản hồi hoặc câu hỏi tiếp theo trong $\le 800ms$.
 5. **Text-to-Speech Engine** sinh file âm thanh giọng nói tự nhiên và phát trực tiếp về tai nghe của ứng viên.
 
+---
+
+### 5.5. Nghiệp Vụ Chống Định Kiến Tuyển Dụng (AI Blind Screening & Anti-Bias Auditing)
+- Để đảm bảo tính minh bạch và công bằng theo chuẩn doanh nghiệp quốc tế:
+  - **Chế độ Lọc mù (Blind Screening Mode):** Tự động che giấu (redact) các trường dữ liệu nhạy cảm: Ảnh thẻ, Tên ứng viên, Giới tính, Tôn giáo, Quê quán trước khi gửi hồ sơ cho Hiring Manager chấm điểm.
+  - Đánh giá năng lực thuần túy dựa trên: Số năm kinh nghiệm công nghệ thực tế, Dự án GitHub/Portfolio, và Điểm phỏng vấn kỹ thuật từ AI.
+
+---
+
+### 5.6. Nghiệp Vụ Tự Động Hóa Lịch Phỏng Vấn Đa Kênh (Smart Calendar Scheduling & No-Show Alerts)
+- **Tích hợp hai chiều Google Calendar / Microsoft 365:**
+  - AI tự động đọc lịch rảnh của Trưởng bộ phận kỹ thuật (Hiring Manager).
+  - Tự động sinh liên kết đặt lịch cá nhân hóa gửi cho ứng viên tự chọn khung giờ phù hợp (giống Calendly).
+  - **Cơ chế chống bùng lịch (No-Show Reduction):** Bắn thông báo nhắc nhở qua Zalo ZNS / SMS trước 24 giờ và 2 giờ. Nếu ứng viên không bấm nút "Xác nhận tham gia", hệ thống tự động giải phóng khung giờ phỏng vấn đó cho ứng viên tiếp theo trong danh sách chờ.
+
+---
+
+### 5.7. Thang Đo Năng Lực Chuẩn Hóa & Bảng Điểm Hiệu Chuẩn (Calibration Scorecard)
+- AI không chỉ chấm điểm chung chung (VD: 8/10), mà bóc tách ma trận tiêu chí:
+  - *Hard Skills Alignment:* Độ khớp công nghệ với dự án thực tế.
+  - *Behavioral STAR Methodology:* Cách ứng viên cấu trúc câu trả lời theo format: *Situation (Tình huống) $\rightarrow$ Task (Nhiệm vụ) $\rightarrow$ Action (Hành động) $\rightarrow$ Result (Kết quả)*.
+  - *Clarity & Communication Tone:* Độ mạch lạc, sự tự tin và khả năng phản xạ ngoại ngữ.
+
+

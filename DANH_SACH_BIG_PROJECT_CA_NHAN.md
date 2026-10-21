@@ -21,9 +21,13 @@
 | **09** | **IT + Nông nghiệp (AgriTech)** | B2B Agri Auction & Plant Disease Vision | Sàn đấu giá thời gian thực (WebSocket), EfficientNet nhận diện bệnh lá qua ảnh | [13_agritech_b2b_auction_plant_vision.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/13_agritech_b2b_auction_plant_vision.md) |
 | **10** | **IT Thuần Backend Chịu Tải** | High-Concurrency Flash Sale & Ticketing | Redis Lua Script (Atomic Lock), RabbitMQ, Idempotency, k6 stress test 10k RPS | [05_high_concurrency_flash_sale.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/05_high_concurrency_flash_sale.md) |
 | **11** | **IT B2B AI Native** | AI Multi-Channel Support Inbox & Auto-Order | Vector DB (pgvector/Qdrant), RAG LangChain, Meta/Zalo Webhook, Function Calling | [06_ai_multichannel_customer_inbox.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/06_ai_multichannel_customer_inbox.md) |
-| **12** | **IT EdTech & DevTools** | Online Code Judge & Docker Sandbox | Docker Engine API, Linux Cgroups/Namespaces cô lập mã độc, Monaco Editor | [07_online_judge_code_sandbox.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/07_online_judge_code_sandbox.md) |
+| **12** | **IT EdTech & DevTools** | Online Code Judge & Docker Sandbox | Docker Engine API, Linux Cgroups/Namespaces cô lập mã độc, Monaco Editor | [07_online_judge_code_sandbox.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/07_online_judge_code_sandbox.md) |
+| **🔥 13** | **IT An Ninh Tài Chính (Fraud & AML)** | Real-time Financial Fraud Detection & Risk Scoring | Apache Kafka/Flink, Neo4j Graph DB phát hiện tài khoản rác/rửa tiền, ML scoring < 50ms | [17_fintech_realtime_fraud_detection_engine.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/17_fintech_realtime_fraud_detection_engine.md) |
+| **🔥 14** | **IT Data Engineering (CDP & MarTech)** | Enterprise Customer Data Platform & Identity Stitching | Real-time Identity Stitching (Graph), ClickHouse phân túc động, Lakehouse MinIO | [18_enterprise_cdp_customer_360_identity_stitching.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/18_enterprise_cdp_customer_360_identity_stitching.md) |
+| **🔥 15** | **IT Chuỗi Cung Ứng (Smart WMS)** | Smart Warehouse Management & Dynamic Picking Optimization | Thuật toán tối ưu đường đi S-Shape/TSP, Quản lý kệ đa tầng Barcode, FEFO cận date | [19_smart_warehouse_wms_dynamic_picking.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/19_smart_warehouse_wms_dynamic_picking.md) |
 
 ---
+
 
 ### 🔌 NHÓM 2: IT KẾT HỢP IOT + AI + PHẦN CỨNG (DÀNH CHO BẠN THÍCH CÓ MÔ HÌNH VẬT LÝ)
 

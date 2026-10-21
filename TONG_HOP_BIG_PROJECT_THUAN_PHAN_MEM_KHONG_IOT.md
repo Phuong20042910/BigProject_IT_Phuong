@@ -1,28 +1,35 @@
-# CẨM NANG TOÀN DIỆN: 12 ĐỀ TÀI BIG PROJECT THUẦN PHẦN MỀM (100% NON-IOT)
+# CẨM NANG TOÀN DIỆN: 15 ĐỀ TÀI BIG PROJECT THUẦN PHẦN MỀM (100% NON-IOT)
 ## DÀNH CHO CÁ NHÂN PHÁT TRIỂN SẢN PHẨM THƯƠNG MẠI CHUẨN DOANH NGHIỆP (4 - 6 THÁNG)
 
-> **Cam kết:** Toàn bộ 12 đề tài dưới đây **100% Thuần Phần Mềm**.  
+> **Cam kết:** Toàn bộ 15 đề tài dưới đây **100% Thuần Phần Mềm**.  
 > - KHÔNG CẦN mua mạch điện, vi điều khiển hay linh kiện phần cứng IoT.  
 > - Chỉ cần một máy tính cá nhân để phát triển hoàn chỉnh: **Frontend, Backend, Database, AI/ML, DevOps & Cloud**.  
 > - Đáp ứng đầy đủ quy mô của một **Big Project thương mại thực tế** phục vụ khách hàng trả tiền.
 
 ---
 
-## 🧭 BẢNG SO SÁNH MA TRẬN 12 ĐỀ TÀI THUẦN PHẦN MỀM
+## 🧭 BẢNG SO SÁNH MA TRẬN 15 ĐỀ TÀI THUẦN PHẦN MỀM
 
 | STT | Tên Đề Tài & Lĩnh Vực | Khách Hàng Mục Tiêu Ngoài Đời | Tech Stack Đề Xuất | Độ Khó | File Phân Tích Kỹ Thuật Chi Tiết |
 |:---:|:---|:---|:---|:---:|:---:|
-| **01** | **E-Commerce Tax & Omnichannel Reconciliation** | Chủ shop Shopee, TikTok Shop, Lazada, Hộ kinh doanh | Go/Node.js, PostgreSQL, RabbitMQ, Next.js | ⭐⭐⭐⭐☆ | [14_ecommerce_tax_omnichannel_reconciliation.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/14_ecommerce_tax_omnichannel_reconciliation.md) |
-| **02** | **AI Video Repurposing & MarTech Automation** | Content Creator, Doanh nghiệp chạy Ads TikTok/Shorts | Python (FFmpeg, Whisper), Next.js, BullMQ, LLM | ⭐⭐⭐⭐☆ | [15_ai_video_repurposing_martech.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/15_ai_video_repurposing_martech.md) |
-| **03** | **Smart Shipping Gateway & COD Reconciliation** | Shop bán hàng online ship COD toàn quốc | Node.js/Go, Carrier Open APIs, PostgreSQL, Redis | ⭐⭐⭐☆☆ | [16_logistics_multi_carrier_cod_reconciliation.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/16_logistics_multi_carrier_cod_reconciliation.md) |
-| **04** | **FinTech: SME Cash-Flow & Bank Statement Ledger** | Chủ doanh nghiệp vừa & nhỏ (SME), Cửa hàng F&B | Python (OCR, Prophet), Go/NestJS, PostgreSQL | ⭐⭐⭐⭐☆ | [08_fintech_sme_cashflow_ledger.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/08_fintech_sme_cashflow_ledger.md) |
-| **05** | **LegalTech: E-Contract & AI Legal Risk Auditor** | Doanh nghiệp B2B, Công ty BĐS, Phòng pháp chế | Node.js (Crypto, PDF.js), Python RAG, PostgreSQL | ⭐⭐⭐⭐☆ | [09_legaltech_econtract_ai_risk.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/09_legaltech_econtract_ai_risk.md) |
-| **06** | **Commerce AI: Multi-Channel Inbox & Auto-Order** | Shop thời trang, mỹ phẩm, trung tâm ngoại ngữ, nha khoa | NestJS, WebSocket, Vector DB, Meta/Zalo Webhook | ⭐⭐⭐☆☆ | [06_ai_multichannel_customer_inbox.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/06_ai_multichannel_customer_inbox.md) |
-| **07** | **PropTech: Real Estate Heatmap & GIS Intelligence** | Người mua/thuê nhà, môi giới BĐS, chuỗi bán lẻ | PostgreSQL PostGIS, Mapbox 3D, XGBoost Regressor | ⭐⭐⭐☆☆ | [10_proptech_gis_real_estate.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/10_proptech_gis_real_estate.md) |
-| **08** | **HealthTech: Telehealth WebRTC & Drug Checker** | Phòng khám tư, bác sĩ chuyên khoa, bệnh nhân mãn tính | WebRTC (LiveKit), Neo4j Graph DB, AES-256 HIPAA | ⭐⭐⭐⭐☆ | [11_healthtech_telehealth_drug_checker.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/11_healthtech_telehealth_drug_checker.md) |
-| **09** | **HRTech: Automated ATS & Voice AI Interviewer** | Phòng nhân sự (HR), công ty săn đầu người (Headhunt) | Python (Whisper, TTS), FastAPI, pgvector, Next.js | ⭐⭐⭐⭐☆ | [12_hrtech_ats_ai_voice_interviewer.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/12_hrtech_ats_ai_voice_interviewer.md) |
-| **10** | **High Concurrency: Flash Sale & Concert Ticketing** | Sàn TMĐT, đơn vị tổ chức sự kiện, bán vé concert | Redis Lua Script, RabbitMQ, PostgreSQL, k6 test | ⭐⭐⭐⭐☆ | [05_high_concurrency_flash_sale.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/05_high_concurrency_flash_sale.md) |
-| **11** | **AgriTech Data: B2B Live Auction & Plant Vision** | Hợp tác xã nông nghiệp, doanh nghiệp xuất khẩu | Go (WebSocket Auction), PyTorch (EfficientNet) | ⭐⭐⭐☆☆ | [13_agritech_b2b_auction_plant_vision.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/13_agritech_b2b_auction_plant_vision.md) |
+| **01** | **E-Commerce Tax & Omnichannel Reconciliation** | Chủ shop Shopee, TikTok Shop, Lazada, Hộ kinh doanh | Go/Node.js, PostgreSQL, RabbitMQ, Next.js | ⭐⭐⭐⭐☆ | [14_ecommerce_tax_omnichannel_reconciliation.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/14_ecommerce_tax_omnichannel_reconciliation.md) |
+| **02** | **AI Video Repurposing & MarTech Automation** | Content Creator, Doanh nghiệp chạy Ads TikTok/Shorts | Python (FFmpeg, Whisper), Next.js, BullMQ, LLM | ⭐⭐⭐⭐☆ | [15_ai_video_repurposing_martech.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/15_ai_video_repurposing_martech.md) |
+| **03** | **Smart Shipping Gateway & COD Reconciliation** | Shop bán hàng online ship COD toàn quốc | Node.js/Go, Carrier Open APIs, PostgreSQL, Redis | ⭐⭐⭐☆☆ | [16_logistics_multi_carrier_cod_reconciliation.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/16_logistics_multi_carrier_cod_reconciliation.md) |
+| **04** | **FinTech: SME Cash-Flow & Bank Statement Ledger** | Chủ doanh nghiệp vừa & nhỏ (SME), Cửa hàng F&B | Python (OCR, Prophet), Go/NestJS, PostgreSQL | ⭐⭐⭐⭐☆ | [08_fintech_sme_cashflow_ledger.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/08_fintech_sme_cashflow_ledger.md) |
+| **05** | **LegalTech: E-Contract & AI Legal Risk Auditor** | Doanh nghiệp B2B, Công ty BĐS, Phòng pháp chế | Node.js (Crypto, PDF.js), Python RAG, PostgreSQL | ⭐⭐⭐⭐☆ | [09_legaltech_econtract_ai_risk.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/09_legaltech_econtract_ai_risk.md) |
+| **06** | **Commerce AI: Multi-Channel Inbox & Auto-Order** | Shop thời trang, mỹ phẩm, trung tâm ngoại ngữ, nha khoa | NestJS, WebSocket, Vector DB, Meta/Zalo Webhook | ⭐⭐⭐☆☆ | [06_ai_multichannel_customer_inbox.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/06_ai_multichannel_customer_inbox.md) |
+| **07** | **PropTech: Real Estate Heatmap & GIS Intelligence** | Người mua/thuê nhà, môi giới BĐS, chuỗi bán lẻ | PostgreSQL PostGIS, Mapbox 3D, XGBoost Regressor | ⭐⭐⭐☆☆ | [10_proptech_gis_real_estate.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/10_proptech_gis_real_estate.md) |
+| **08** | **HealthTech: Telehealth WebRTC & Drug Checker** | Phòng khám tư, bác sĩ chuyên khoa, bệnh nhân mãn tính | WebRTC (LiveKit), Neo4j Graph DB, AES-256 HIPAA | ⭐⭐⭐⭐☆ | [11_healthtech_telehealth_drug_checker.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/11_healthtech_telehealth_drug_checker.md) |
+| **09** | **HRTech: Automated ATS & Voice AI Interviewer** | Phòng nhân sự (HR), công ty săn đầu người (Headhunt) | Python (Whisper, TTS), FastAPI, pgvector, Next.js | ⭐⭐⭐⭐☆ | [12_hrtech_ats_ai_voice_interviewer.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/12_hrtech_ats_ai_voice_interviewer.md) |
+| **10** | **High Concurrency: Flash Sale & Concert Ticketing** | Sàn TMĐT, đơn vị tổ chức sự kiện, bán vé concert | Redis Lua Script, RabbitMQ, PostgreSQL, k6 test | ⭐⭐⭐⭐☆ | [05_high_concurrency_flash_sale.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/05_high_concurrency_flash_sale.md) |
+| **11** | **AgriTech Data: B2B Live Auction & Plant Vision** | Hợp tác xã nông nghiệp, doanh nghiệp xuất khẩu | Go (WebSocket Auction), PyTorch (EfficientNet) | ⭐⭐⭐☆☆ | [13_agritech_b2b_auction_plant_vision.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/13_agritech_b2b_auction_plant_vision.md) |
+| **12** | **EdTech: Online Code Judge & Docker Sandbox** | Trường Đại học CNTT, trung tâm dạy code, test tuyển dev | Docker Daemon API, Linux Cgroups, Monaco Editor | ⭐⭐⭐⭐☆ | [07_online_judge_code_sandbox.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/07_online_judge_code_sandbox.md) |
+| **🔥 13** | **FinTech: Real-time Fraud Detection & AML Risk Scoring** | Ngân hàng số, Cổng thanh toán, Ví điện tử | Kafka, Flink, Neo4j Graph DB, LightGBM, Redis | ⭐⭐⭐⭐⭐ | [17_fintech_realtime_fraud_detection_engine.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/17_fintech_realtime_fraud_detection_engine.md) |
+| **🔥 14** | **Data Platform: Enterprise CDP & Identity Stitching** | Tập đoàn bán lẻ, Chuỗi F&B, Sàn TMĐT đa kênh | ClickHouse OLAP, Kafka, Identity Graph, MinIO Lakehouse | ⭐⭐⭐⭐⭐ | [18_enterprise_cdp_customer_360_identity_stitching.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/18_enterprise_cdp_customer_360_identity_stitching.md) |
+| **🔥 15** | **Supply Chain: Smart WMS & Dynamic Picking Route** | Trung tâm Fulfillment TMĐT, Tổng kho bán lẻ | Thuật toán TSP/S-Shape, Barcode PWA, PostgreSQL | ⭐⭐⭐⭐☆ | [19_smart_warehouse_wms_dynamic_picking.md](file:///e:/Big%20Project%20for%20IT/BigProject_IT_Phuong/de_tai_chi_tiet/19_smart_warehouse_wms_dynamic_picking.md) |
+
+---
+file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/13_agritech_b2b_auction_plant_vision.md) |
 | **12** | **EdTech: Online Code Judge & Docker Sandbox** | Trường Đại học CNTT, trung tâm dạy code, test tuyển dev | Docker Daemon API, Linux Cgroups, Monaco Editor | ⭐⭐⭐⭐☆ | [07_online_judge_code_sandbox.md](file:///e:/Big%20Project%20for%20IT/de_tai_chi_tiet/07_online_judge_code_sandbox.md) |
 
 ---

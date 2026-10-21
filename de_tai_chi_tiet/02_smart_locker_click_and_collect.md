@@ -150,3 +150,43 @@ CREATE TABLE locker_orders (
    - Nếu đường truyền Internet tại trạm tủ bị chập chờn, ESP32 vẫn lưu bộ nhớ cache cục bộ (EEPROM / SPIFFS) danh sách mã PIN offline đã được mã hoá HMAC từ trước để khách vẫn bấm phím số mở tủ bình thường.
 3. **Cơ chế xác thực an toàn phần cứng (Hardware Authentication):**
    - Lệnh mở tủ gửi qua MQTT được ký điện tử (HMAC-SHA256) kèm Timestamp và Nonce để chống tấn công nghe lén (Replay Attack).
+
+---
+
+## 7. MA TRẬN ACTORS & QUY TRÌNH NGHIỆP VỤ BIG PROJECT (SMART LOCKER NETWORK OPERATIONS)
+
+```mermaid
+stateDiagram-v2
+    [*] --> BOX_RESERVED: Khách đặt hàng trực tuyến chọn nhận tại Tủ A
+    BOX_RESERVED --> DEPOSITED: Shipper quét mã kiện hàng -> Tủ tự bật mở -> Bỏ hàng & Đóng tủ
+    DEPOSITED --> CUSTOMER_NOTIFIED: Hệ thống gửi SMS/Zalo kèm Dynamic QR Code
+    CUSTOMER_NOTIFIED --> PICKED_UP: Khách quét QR -> Tủ bật mở -> Lấy đồ thành công
+    CUSTOMER_NOTIFIED --> OVERSTAY_WARNING: Quá 24h chưa lấy -> Nhắc nhở tính phí phụ thu
+    OVERSTAY_WARNING --> EXPIRED_LOCKED: Quá 48h chưa lấy -> Khóa mã nhận & Báo Shipper thu hồi
+    EXPIRED_LOCKED --> RETURNED_TO_HUB: Shipper mở tủ gom hàng trả về bưu cục trung tâm
+    PICKED_UP --> BOX_AVAILABLE: Khép cửa tủ -> Ngăn tủ sẵn sàng phục vụ đơn mới
+```
+
+### 7.1. Ma trận Actors & Phân quyền Mạng lưới Tủ Đa Điểm
+| Actor / Vai trò | Trách nhiệm & Quyền hạn nghiệp vụ trong Big Project |
+| :--- | :--- |
+| **End Customer (Người nhận hàng)** | Mở app lấy mã Dynamic QR TOTP, quét nhận hàng, thanh toán phụ phí lưu kho quá hạn (nếu có). |
+| **Courier / Shipper (Giao hàng bưu chính)** | Quét mã vận đơn để tủ gợi ý ngăn phù hợp (S/M/L), bỏ hàng vào tủ, thu hồi hàng quá hạn theo danh sách điều phối. |
+| **Field Maintenance Tech (Kỹ thuật viên hiện trường)** | Kiểm tra bảo trì khóa chốt Solenoid, thay pin dự phòng UPS, can thiệp bằng Master Key khi có sự cố kẹt cửa. |
+| **NOC Operations Manager (Trung tâm điều hành trạm tủ)** | Giám sát tỷ lệ lấp đầy ngăn tủ (Occupancy Rate) toàn thành phố, điều phối shipper tránh gửi vào các trạm đã kín chỗ. |
+
+---
+
+### 7.2. Nghiệp Vụ Tính Phí Lưu Kho Quá Hạn & Thu Hồi Tự Động (Overdue Storage & Eviction)
+- **Quy tắc tính phí lưu trữ bậc thang (Step-Up Storage Pricing):**
+  - Miễn phí lưu kho trong **24 giờ đầu tiên**.
+  - Từ giờ thứ 25 đến giờ thứ 48: Tính phí 5.000 VNĐ / 12 giờ. Khách phải quét mã VietQR thanh toán tiền phụ phí trực tiếp trên màn hình tủ thì chốt khóa mới mở.
+  - Sau 48 giờ: Hệ thống tự động vô hiệu hóa mã nhận của khách, chuyển trạng thái đơn sang `AWAITING_RETURN` và tự động gán nhiệm vụ thu hồi cho shipper tuyến đó gom hàng về kho bưu cục.
+
+---
+
+### 7.3. Xử Lý Sự Cố Phần Cứng & Kẹt Khóa Cửa (Hardware Anomaly & Fail-Safe Handling)
+- Khi lệnh mở chốt gửi xuống ESP32 nhưng cảm biến từ báo `Door_Sensor = CLOSED` (cửa bị kẹt hoặc hỏng chốt):
+  1. ESP32 tự động thử lại xung điện mở lần 2 sau 500ms.
+  2. Nếu vẫn không mở được: Đánh dấu ngăn tủ bị `MALFUNCTION`, tự động hoàn trả token cho khách, tự động mở một ngăn tủ trống khác cùng kích cỡ trong trạm và phát cảnh báo về trung tâm bảo trì.
+

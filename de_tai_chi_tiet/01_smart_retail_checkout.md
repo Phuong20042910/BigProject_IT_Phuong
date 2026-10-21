@@ -211,3 +211,22 @@ sequenceDiagram
      - Đèn LED màu đỏ trên khay nhấp nháy, gửi thông báo đến máy tính bảng của nhân viên giám sát.
   4. Nhân viên đến kiểm tra, nhắc khách đặt lại đồ -> Hệ thống cân lại hợp lệ -> Mở lại chức năng thanh toán bình thường.
 
+---
+
+### 8.5. Luồng hoạt động 3: Khách Đổi Ý Trả Lại Hàng Tại Khay (Dynamic Cart Re-balancing)
+- Khi đang ở màn hình thanh toán, khách nhấc 1 món đồ ra khỏi khay:
+  1. Cảm biến cân đo tải trọng giảm đột ngột.
+  2. Camera tự động chụp ảnh frame mới và so khớp lại danh sách sản phẩm.
+  3. Màn hình tự động cập nhật giỏ hàng: Trừ món đồ vừa lấy ra, tự động tính lại tổng tiền và sinh lại mã QR thanh toán mới trong vòng **0.3 giây** mà không cần khách bấm nút làm mới.
+
+---
+
+### 8.6. Nghiệp Vụ Bán Hàng Ngoại Tuyến (Offline POS Mode & Network Partition Resilience)
+- Trong trường hợp đường truyền Internet tại siêu thị bị đứt cáp:
+  - Máy Kiosk POS tự động chuyển sang chế độ **Edge Local Mode**:
+    - Mô hình YOLO chạy On-Device (OpenVINO / ONNX Runtime trên máy trạm Kiosk).
+    - Lưu trữ giao dịch vào cơ sở dữ liệu cục bộ SQLite / IndexedDB.
+    - Sinh mã VietQR tĩnh hoặc chuyển sang thanh toán thẻ qua máy quẹt POS nội bộ.
+  - Khi có mạng Internet trở lại: Cụm Kiosk tự động đồng bộ hóa toàn bộ lịch sử đơn hàng và cập nhật trừ tồn kho trên cơ sở dữ liệu trung tâm ERP qua hàng đợi đồng bộ chống xung đột.
+
+

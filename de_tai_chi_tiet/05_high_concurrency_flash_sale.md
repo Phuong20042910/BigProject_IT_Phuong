@@ -140,3 +140,45 @@ flowchart TD
      - Xóa `user_id` khỏi Redis Set để giải phóng quota.
 4. Vé lập tức khả dụng cho những người đang xếp hàng tiếp theo.
 
+---
+
+### 5.5. Luồng hoạt động 3: Hệ Thống Phòng Thủ Chống Bot & Đầu Cơ Vé (Anti-Scalping Engine)
+
+Trong các sự kiện săn vé concert hoặc flash sale lớn, hơn 70% lượng request đến từ các script tự động / chợ đen gom vé:
+
+```mermaid
+flowchart TD
+    Req[Request Mua Vé từ Client] --> WAF[Cloudflare / API Gateway]
+    WAF --> Fingerprint[Device Fingerprint & IP Velocity Check]
+    Fingerprint -->|Tần suất > 10 req/s hoặc Dải IP Datacenter| Block[Chặn IP & Đưa vào Blacklist 24h]
+    Fingerprint -->|Nghi vấn hành vi bot| Captcha[Yêu cầu giải Cloudflare Turnstile / mCaptcha]
+    Captcha -->|Thất bại / Timeout| Reject[Trả về HTTP 403 Forbidden]
+    Captcha -->|Vượt qua| Queue[Cho phép vào Phòng chờ ảo Virtual Waiting Room]
+```
+
+- **Đặc trưng nhận diện Bot:**
+  - Nhận diện vân tay thiết bị (Canvas fingerprint, WebGL, User-Agent bất thường).
+  - Tốc độ tương tác (Time to click): Khách hàng thật mất ít nhất 1.5 - 3 giây để nhìn và bấm nút mua; bot gửi request chỉ sau 10 mili-giây kể từ khi mở cổng.
+
+---
+
+### 5.6. Nghiệp vụ Đối soát Tồn kho & Dòng tiền Tự động (End-of-Sale Reconciliation)
+
+Sau mỗi đợt mở bán, một Big Project bắt buộc phải có cơ chế **Đối soát 3 bên (3-Way Post-Sale Reconciliation)** để phát hiện lệch số liệu:
+
+$$\Delta \text{Stock} = \text{Tồn kho ban đầu} - \left( \sum \text{Đơn hàng PAID} + \text{Tồn kho còn dư trên Redis} \right)$$
+
+- Nếu $\Delta \text{Stock} \ne 0$: Hệ thống tự động kích hoạt tiến trình rà soát:
+  1. Quét tìm các **Giao dịch mồ côi (Orphan Transactions):** Tiền đã trừ ở cổng VNPay nhưng Webhook bị rớt mạng nên đơn hàng trên hệ thống vẫn ở trạng thái `PENDING`.
+  2. Tự động gọi API truy vấn trạng thái giao dịch sang cổng thanh toán (Query DR API).
+  3. Nếu thanh toán thành công thật nhưng kho đã bị người khác mua mất do hết hạn giữ chỗ: Tự động kích hoạt **Quy trình Hoàn tiền tự động (Auto-Refund Flow)** về tài khoản khách hàng kèm email xin lỗi trong vòng 3 phút.
+
+---
+
+### 5.7. Chính Sách Hạ Tải Chủ Động & Cầu Chì Tự Ngắt (Circuit Breaker & Graceful Degradation)
+
+Khi lưu lượng truy cập vượt quá ngưỡng tính toán (CPU server $\ge 90\%$ hoặc Connection Pool Database $\ge 85\%$):
+- **Cơ chế Cắt tỉa tính năng (Feature Degradation):** Tự động tắt tạm thời các dịch vụ không thiết yếu: Gợi ý sản phẩm liên quan (Recommendation), Đánh giá/Bình luận (Reviews), Bắn thông báo đẩy (Push Notifications) để dành 100% tài nguyên CPU và RAM phục vụ độc quyền tiến trình **Checkout & Thanh toán**.
+- **Cầu chì bảo vệ Database (Database Circuit Breaker):** Nếu độ trễ phản hồi của PostgreSQL vượt quá 500ms trong 30 giây liên tục, API Gateway lập tức chuyển trạng thái sang `OPEN`, từ chối nhận thêm đơn hàng mới với thông báo *"Hệ thống đang quá tải, vui lòng thử lại sau 30 giây"* nhằm bảo vệ cơ sở dữ liệu không bị sập hoàn toàn.
+
+

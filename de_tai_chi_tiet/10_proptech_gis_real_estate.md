@@ -171,6 +171,98 @@ flowchart TD
 2. Hệ thống gọi Geocoding API (OpenStreetMap Nominatim hoặc Mapbox) chuyển đổi thành tọa độ `(21.0074, 105.8286)`.
 3. Hệ thống tự động ghim vị trí lên bản đồ cho môi giới kéo thả vi chỉnh.
 4. Ngay khi bấm "Lưu tin":
-   - PostGIS tự động tính toán khoảng cách từ ngôi nhà đến 10 địa điểm POI gần nhất.
+    - PostGIS tự động tính toán khoảng cách từ ngôi nhà đến 10 địa điểm POI gần nhất.
    - AI Valuation Model tự động tính toán mức giá tham chiếu cho khu vực đó: *"Giá trung bình khu vực này là 110 triệu/m². Mức giá bạn đang rao là 95 triệu/m² (Rẻ hơn thị trường 13%)"*.
+
+---
+
+## 7. NÂNG CẤP LÊN QUY MÔ BIG DATA PLATFORM & DATA LAKEHOUSE
+
+Khi phát triển đề tài này thành **Hệ sinh thái Big Data Bất động sản (PropTech Big Data Platform)** xử lý quy mô hàng triệu tin đăng, hành vi người dùng và bản đồ nhiệt toàn quốc, hệ thống sở hữu kiến trúc và nghiệp vụ chuyên sâu sau:
+
+### 7.1. Hệ Thống Actors Chuẩn Big Data Ecosystem
+
+| Nhóm Actor | Vai trò & Trách nhiệm trong Nền tảng Dữ liệu Lớn |
+| :--- | :--- |
+| **Data Producers (Nguồn dữ liệu)** | - Cụm Crawler phân tán thu thập hàng trăm nghìn tin BĐS từ đa sàn (Batdongsan, Chotot, CafeLand).<br>- Tracking SDK thu thập clickstream thời gian thực của người dùng.<br>- Open GIS APIs cung cấp bản đồ quy hoạch, trạm metro, công viên, bệnh viện. |
+| **Data Platform & DataOps Engineer** | - Quản trị và giám sát hạ tầng Data Pipeline, cụm Kafka/Spark/ClickHouse.<br>- Lập trình và theo dõi các luồng xử lý dữ liệu tự động (Airflow DAGs).<br>- Giám sát độ trễ SLA và xử lý backpressure khi lưu lượng tăng đột biến. |
+| **Data Steward & Governance Officer** | - Quản trị danh mục dữ liệu (Data Catalog & Metadata Management).<br>- Thiết lập luật kiểm soát chất lượng dữ liệu (Data Quality Rules & Data Profiling).<br>- Kiểm toán nguồn gốc dữ liệu (Data Lineage) và bảo vệ thông tin cá nhân PII (số điện thoại chủ nhà). |
+| **B2B Enterprise Consumers & BI Analysts** | - Các tổ chức thẩm định giá, ngân hàng (thẩm định tài sản thế chấp) và tập đoàn bán lẻ (chọn mặt bằng kinh doanh) kết nối qua **B2B Bulk Data API** hoặc **Data Marketplace**. |
+
+---
+
+### 7.2. Kiến Trúc Hồ Dữ Liệu Đa Tầng (Medallion Lakehouse: Bronze -> Silver -> Gold)
+
+```mermaid
+flowchart TD
+    subgraph Layer_Raw["1. Ingestion & Bronze Layer (Raw Storage)"]
+        RawCrawl["Crawler Bot Scrapes (HTML/JSON)"]
+        ClickLogs["Clickstream Logs (Kafka Topic: user-events)"]
+        GovGIS["GIS Spatial Shapefiles"]
+        MinIO_Bronze[("MinIO / S3 Bronze: Raw Parquet Data")]
+        RawCrawl --> MinIO_Bronze
+        ClickLogs --> MinIO_Bronze
+        GovGIS --> MinIO_Bronze
+    end
+
+    subgraph Layer_Processing["2. Distributed Data Processing (Spark & Airflow)"]
+        AirflowDAG["Airflow Scheduler (Điều phối DAG hàng ngày)"]
+        SparkCleaner["PySpark Data Cleaning & Deduplication Job"]
+        GeocodingWorker["Batch Reverse Geocoding & Address Standardization"]
+        DQCheck["Data Quality Gate (Great Expectations: Null %, GPS Bounds)"]
+        
+        MinIO_Bronze --> DQCheck
+        DQCheck --> SparkCleaner
+        SparkCleaner --> GeocodingWorker
+    end
+
+    subgraph Layer_Silver["3. Silver Layer (Curated & Enriched Lake)"]
+        MinIO_Silver[("MinIO Silver: Enriched Properties & POIs Parquet")]
+        GeocodingWorker --> MinIO_Silver
+    end
+
+    subgraph Layer_Gold["4. Gold Layer & OLAP Serving Engine"]
+        H3Indexer["Uber H3 Hexagonal Spatial Indexer (Resolution 7, 8, 9)"]
+        ClickHouseDB[("ClickHouse OLAP: Heatmap Pre-aggregates")]
+        FeatureStore[("Feast Feature Store (Redis) cho AI Model")]
+        
+        MinIO_Silver --> H3Indexer
+        H3Indexer --> ClickHouseDB
+        MinIO_Silver --> FeatureStore
+    end
+
+    subgraph Layer_Consumption["5. Phục Vụ Truy Vấn Siêu Tốc (Data Serving)"]
+        MapboxUI["Bản Đồ 3D Heatmap Realtime (< 50ms)"]
+        BIReports["Báo Cáo Biến Động Thị Trường BĐS Toàn Quốc"]
+        B2B_API["Enterprise Data API (Rate-Limited by Tier)"]
+        
+        ClickHouseDB --> MapboxUI
+        ClickHouseDB --> BIReports
+        ClickHouseDB --> B2B_API
+    end
+
+    AirflowDAG -.->|Điều phối| SparkCleaner
+    AirflowDAG -.->|Giám sát| DQCheck
+```
+
+---
+
+### 7.3. Các Nghiệp Vụ Big Data Chuyên Sâu
+
+#### A. Nghiệp vụ Khử trùng lặp & Định danh Thực thể (Entity Resolution / Deduplication at Scale)
+- **Vấn đề thực tế:** Cùng một căn hộ chung cư được 20 môi giới đăng tin với các mức giá chênh lệch, diện tích làm tròn và tiêu đề khác nhau làm loãng dữ liệu.
+- **Quy trình giải quyết:**
+  1. Trích xuất thuộc tính chuẩn: Tên dự án, Số block/tầng (nếu có), Tọa độ địa lý GPS, Diện tích tim tường.
+  2. Áp dụng thuật toán **Spatial Buffer Matching** (bán kính $\le 15m$) kết hợp **Jaro-Winkler String Distance** trên địa chỉ và tiêu đề.
+  3. Nếu độ tương đồng $\ge 90\%$, hệ thống tự động gom vào **Cụm thực thể (Property Cluster)**, gán nhãn ID duy nhất và tính toán dải giá chào bán thực tế (Min - Median - Max).
+
+#### B. Phân Cụm Lục Giác Uber H3 (Spatial Indexing for Sub-second Heatmap)
+- Thay vì gửi hàng triệu điểm Point(lat, long) về trình duyệt gây giật lag:
+  - Hệ thống tính toán sẵn các chỉ số thống kê (Giá trung bình, Số lượng tin đăng, Chỉ số thanh khoản) theo từng ô lục giác **H3 Index Resolution 8** (bán kính ~460m) và **Resolution 9** (bán kính ~170m).
+  - Kết quả được lưu tại bảng Aggregates của **ClickHouse**. Khi người dùng di chuyển bản đồ hoặc zoom, trình duyệt chỉ truy vấn vài chục ô lục giác với thời gian phản hồi **dưới 30ms**.
+
+#### C. Nghiệp vụ Giám sát Dòng Chảy & Chất Lượng Dữ Liệu (Data Observability & Lineage)
+- **Data Lineage:** Bất kỳ chỉ số giá nào trên bản đồ đều có thể truy ngược lại nguồn gốc: xuất phát từ tin cào nào, chạy qua job Spark nào lúc mấy giờ.
+- **Data Drift Detection:** Khi tỷ lệ tin rao có giá chênh lệch trên 50% so với tuần trước, hệ thống tự động bắn cảnh báo lên kênh Slack/Telegram của DataOps để rà soát hiện tượng "thổi giá" hoặc lỗi parser của crawler.
+
 

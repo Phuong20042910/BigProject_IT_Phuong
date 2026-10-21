@@ -148,3 +148,22 @@ sequenceDiagram
   4. Bệnh nhân mở lại app -> Hệ thống dùng Reconnect Token tự động đưa thẳng bệnh nhân trở lại phòng gọi mà không cần bác sĩ bấm mời lại.
   5. Nếu sau 90 giây vẫn không thể kết nối: Hệ thống tự động chuyển sang chế độ Chat văn bản / SMS nhắc nhở.
 
+---
+
+### 6.5. Nghiệp Vụ Liên Thông Đơn Thuốc Quốc Gia & Điều Phối Giao Thuốc Tận Nhà (Pharmacy Fulfillment)
+- **Chuẩn hóa Đơn thuốc Điện tử Quốc gia (Bộ Y Tế):**
+  - Sau khi bác sĩ ký số đơn thuốc, hệ thống sinh mã định danh đơn thuốc quốc gia theo thông tư Bộ Y Tế và đồng bộ qua API `donthuocquocgia.vn`.
+- **Định tuyến Nhà thuốc Gần nhất (Smart Pharmacy Dispatching):**
+  - Bệnh nhân có thể bấm nút "Mua thuốc giao tận nhà":
+  - Hệ thống tự động tìm kiếm chuỗi nhà thuốc đối tác (Long Châu, Pharmacity, An Khang) trong bán kính 3km có **đủ 100% danh mục thuốc trong đơn**.
+  - Tự động tạo đơn giao hàng hỏa tốc trong vòng 2 giờ cho bệnh nhân.
+
+---
+
+### 6.6. Chuẩn Hóa Dữ Liệu Y Tế Quốc Tế FHIR / HL7 & Bảo Mật Dữ Liệu Bệnh Án
+- Mọi hồ sơ bệnh án điện tử (EMR) được lưu trữ theo chuẩn cấu trúc **HL7 FHIR JSON Schema** (`Patient`, `Encounter`, `Condition`, `MedicationRequest`).
+- **Bảo mật dữ liệu sức khỏe (HIPAA Compliance):**
+  - Toàn bộ trường thông tin chẩn đoán bệnh án, đơn thuốc, hình ảnh nội soi được mã hóa bằng thuật toán AES-256 ở mức cơ sở dữ liệu (Field-level Encryption).
+  - Ghi vết truy cập bất biến: Bất cứ ai (kể cả y tá, điều dưỡng hay bác sĩ khác khoa) mở xem hồ sơ bệnh nhân đều bị ghi lại IP, thời điểm và lý do xem vào bảng `medical_access_audit_logs`.
+
+

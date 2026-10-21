@@ -102,3 +102,48 @@ sequenceDiagram
 3. **Độ chính xác (Accuracy):**
    - Đạt độ chính xác Top-1 $> 94\%$ trên tập kiểm thử (Test set).
    - Tốc độ suy luận (Inference Time): **dưới 100ms**.
+
+---
+
+## 5. MA TRẬN ACTORS & PHÂN QUYỀN SÀN NÔNG SẢN B2B (MULTI-STAKEHOLDER MATRIX)
+
+| Actor / Vai trò | Trách nhiệm & Quyền hạn nghiệp vụ trong Big Project |
+| :--- | :--- |
+| **Farmer / Cooperative (Hợp tác xã nông sản)** | Đăng ký mở phiên đấu giá, tải ảnh nông sản và kết quả quét AI bệnh lá, xác nhận chuẩn bị đơn hàng khi có người trúng đấu giá. |
+| **B2B Buyer (Chuỗi siêu thị / Doanh nghiệp xuất khẩu)** | Đặt cọc tiền ký quỹ tham gia phòng đấu giá, trả giá thời gian thực (Real-time Bidding), ủy thác thanh toán qua tài khoản Escrow. |
+| **Quality Inspector (Chuyên viên kiểm định nông sản)** | Lấy mẫu kiểm định độc lập tại vườn, xác nhận chỉ số độ ngọt Brix, dư lượng thuốc BVTV, cấp chứng chỉ VietGAP/GlobalGAP số hóa. |
+| **Platform Escrow Manager (Quản trị viên ký quỹ & Trọng tài)** | Quản lý tài khoản tạm giữ tiền (Escrow), giải ngân tiền cho nông dân sau khi siêu thị nhận hàng nguyên vẹn, xử lý khiếu nại nếu hàng dập nát. |
+
+---
+
+## 6. PHÂN TÍCH NGHIỆP VỤ BIG PROJECT & BẢN ĐỒ QUY TRÌNH (ENTERPRISE AGRI WORKFLOWS)
+
+```mermaid
+stateDiagram-v2
+    [*] --> LISTING_DRAFT: HTX tạo lô hàng nông sản (5 tấn Sầu riêng)
+    LISTING_DRAFT --> QUALITY_CHECK: Tải ảnh lá & quả để AI quét bệnh lý
+    QUALITY_CHECK --> ESCROW_DEPOSIT: Mở cổng đăng ký cho người mua đặt cọc 10%
+    ESCROW_DEPOSIT --> AUCTION_LIVE: Đấu giá Realtime qua WebSocket
+    AUCTION_LIVE --> AUCTION_WON: Chốt người trả giá cao nhất (Winner)
+    AUCTION_WON --> CONTRACT_SIGNED: Tự động ký Hợp đồng mua bán điện tử & Giữ tiền Escrow
+    CONTRACT_SIGNED --> HARVEST_DELIVERY: Nông dân thu hoạch & Điều xe lạnh vận chuyển
+    HARVEST_DELIVERY --> INSPECTION_ACCEPT: Siêu thị nhận hàng & Kiểm tra chất lượng
+    INSPECTION_ACCEPT --> ESCROW_RELEASE: Giải ngân 100% tiền cho Hợp tác xã
+    INSPECTION_ACCEPT --> DISPUTE_RESOLUTION: Lô hàng bị hư hại > 5% -> Trọng tài trừ tiền bồi thường
+```
+
+---
+
+### 6.1. Nghiệp Vụ Ký Quỹ & Chống Bùng Kèo Đấu Giá (Escrow Deposit Guarantee)
+- Nông sản là mặt hàng nhanh hỏng (Perishable Goods). Nếu người trúng đấu giá bùng kèo, nông sản sẽ bị thối rữa gây phá sản cho nông dân:
+  1. **Quy tắc Ký quỹ trước (Pre-Bid Deposit):** Người mua bắt buộc phải nạp cọc $10\%$ giá trị khởi điểm vào tài khoản Escrow của sàn trước khi được cấp quyền bấm nút đấu giá.
+  2. **Quy tắc Phạt vi phạm:** Nếu sau 24h trúng đấu giá người mua không thanh toán phần còn lại:
+     - Hệ thống tự động tịch thu $100\%$ tiền đặt cọc để bồi thường cho nông dân.
+     - Khóa tài khoản vĩnh viễn và trao quyền mua cho người trả giá cao thứ 2 (Runner-up).
+
+---
+
+### 6.2. Truy Xuất Nguồn Gốc Số Hóa (Farm-to-Fork Traceability QR Code)
+- Mỗi lô nông sản sau khi đấu giá thành công được cấp một **Mã QR định danh duy nhất**:
+  - Người tiêu dùng quét mã QR tại siêu thị sẽ xem được toàn bộ hành trình: Vị trí tọa độ GPS nông trại, Ngày phun thuốc bảo vệ thực vật cuối cùng, Báo cáo kiểm định AI không có sâu bệnh, và Nhật ký vận chuyển xe lạnh.
+
